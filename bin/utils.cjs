@@ -1,3 +1,5 @@
+const { htmlToLexical, convertLexicalToYjs } = require("./lexical2ydoc.cjs");
+
 const Y = require("yjs");
 const syncProtocol = require("y-protocols/sync");
 const awarenessProtocol = require("y-protocols/awareness");
@@ -46,7 +48,7 @@ if (typeof persistenceDir === "string") {
 				ldb.storeUpdate(docName, update);
 			});
 		},
-		writeState: async (_docName, _ydoc) => {},
+		writeState: async (_docName, _ydoc) => { },
 	};
 }
 
@@ -153,7 +155,7 @@ class WSSharedDoc extends Y.Doc {
 			});
 		};
 		this.awareness.on("update", awarenessChangeHandler);
-		this.on("update", /** @type {any} */ (updateHandler));
+		this.on("update", /** @type {any} */(updateHandler));
 		if (isCallbackSet) {
 			this.on(
 				"update",
@@ -269,7 +271,7 @@ const send = (doc, conn, m) => {
 	try {
 		conn.send(
 			m,
-			/** @param {any} err */ (err) => {
+			/** @param {any} err */(err) => {
 				err != null && closeConn(doc, conn);
 			}
 		);
@@ -297,7 +299,7 @@ exports.setupWSConnection = (
 	// listen and reply to events
 	conn.on(
 		"message",
-		/** @param {ArrayBuffer} message */ (message) =>
+		/** @param {ArrayBuffer} message */(message) =>
 			messageListener(conn, doc, new Uint8Array(message))
 	);
 
@@ -352,12 +354,19 @@ exports.setupWSConnection = (
 
 /**
  * @param {any} docName
- * @param {any} update
+ * @param {any} htmlContent
  */
-exports.handleUpdateByApi = (docName, update) => {
-	const doc = getYDoc(docName);
-	console.log(doc);
-	Y.applyUpdate(doc, update);
+exports.updateDocumentContent = async (docName, htmlContent) => {
+	const ydoc = getYDoc(docName);
+	const lexicalEditor = await htmlToLexical(htmlContent)
+	// console.log(lexicalEditor)
+	lexicalEditor.update(() => {
+		const newDoc = convertLexicalToYjs(lexicalEditor);
+		// Process the Yjs document or perform any other operations
+		// console.log(newDoc);
+		const update = Y.encodeStateAsUpdate(newDoc);
+	// const update = Y.encodeStateAsUpdate(ydoc);
+	updateHandler(update, null, ydoc, null);
+	});
 
-	updateHandler(update, "", doc, "");
 };

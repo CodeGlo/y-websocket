@@ -59,11 +59,23 @@
     ]
   },
   "dependencies": {
+    "@lexical/headless": "^0.14.5",
+    "@lexical/html": "^0.14.5",
+    "@lexical/react": "^0.14.5",
+    "@lexical/yjs": "^0.14.5",
+    "jsdom": "^24.0.0",
+    "lexical": "^0.14.5",
     "lib0": "^0.2.52",
     "lodash.debounce": "^4.0.8",
+    "prosemirror-example-setup": "^1.2.2",
+    "prosemirror-schema-basic": "^1.2.2",
+    "prosemirror-state": "^1.4.3",
+    "prosemirror-view": "^1.33.6",
+    "y-prosemirror": "^1.2.3",
     "y-protocols": "^1.0.5"
   },
   "devDependencies": {
+    "@types/jsdom": "^21.1.6",
     "@types/node": "^18.15.0",
     "@types/ws": "^8.5.10",
     "rollup": "^3.19.1",

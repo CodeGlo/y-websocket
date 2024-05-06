@@ -5,7 +5,8 @@ const http = require("http");
 const number = require("lib0/number");
 const wss = new WebSocket.Server({ noServer: true });
 const setupWSConnection = require("./utils.cjs").setupWSConnection;
-const handleUpdateByApi = require("./utils.cjs").handleUpdateByApi;
+const updateDocumentContent = require("./utils.cjs").updateDocumentContent;
+const getYDoc = require("./utils.cjs").getYDoc;
 
 const host = process.env.HOST || "localhost";
 const port = number.parseInt(process.env.PORT || "1234");
@@ -13,8 +14,9 @@ const port = number.parseInt(process.env.PORT || "1234");
 const server = http.createServer(async (_request, response) => {
 	if (_request.url === "/update" && _request.method === "POST") {
 		const body = await getBody(_request);
-		console.log(body);
-		// handleUpdateByApi(body.docName, body.update);
+		// const doc = getYDoc('odin_document/' + body.document_id)
+		// console.log((doc.getText('title')));
+		await updateDocumentContent('odin_document/' + body.document_id, body.body);
 		response.writeHead(200);
 		response.end();
 	} else {
