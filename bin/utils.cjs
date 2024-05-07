@@ -1,5 +1,4 @@
-const { htmlToLexical, convertLexicalToYjs } = require("./lexical2ydoc.cjs");
-
+const { rewriteDoc } = require('./rewriteDoc.cjs')
 const Y = require("yjs");
 const syncProtocol = require("y-protocols/sync");
 const awarenessProtocol = require("y-protocols/awareness");
@@ -358,15 +357,15 @@ exports.setupWSConnection = (
  */
 exports.updateDocumentContent = async (docName, htmlContent) => {
 	const ydoc = getYDoc(docName);
-	const lexicalEditor = await htmlToLexical(htmlContent)
-	// console.log(lexicalEditor)
-	lexicalEditor.update(() => {
-		const newDoc = convertLexicalToYjs(lexicalEditor);
-		// Process the Yjs document or perform any other operations
-		// console.log(newDoc);
-		const update = Y.encodeStateAsUpdate(newDoc);
-	// const update = Y.encodeStateAsUpdate(ydoc);
-	updateHandler(update, null, ydoc, null);
-	});
-
+	// const root = ydoc.getXmlFragment('root')
+	const root = ydoc.get('root', Y.XmlText)
+	root.delete(0, root.length)
+	const clearUpdate = Y.encodeStateAsUpdate(ydoc)
+	updateHandler(clearUpdate, null, ydoc, null)
+	
+	const newDoc = rewriteDoc(docName, htmlContent, ydoc, (editor, binding) => {
+		return binding.doc
+	})
+	const update = Y.encodeStateAsUpdate(newDoc);
+	updateHandler(update, null, ydoc, null)
 };
