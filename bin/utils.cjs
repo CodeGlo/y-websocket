@@ -357,15 +357,13 @@ exports.setupWSConnection = (
  */
 exports.updateDocumentContent = async (docName, htmlContent) => {
 	const ydoc = getYDoc(docName);
-	// const root = ydoc.getXmlFragment('root')
 	const root = ydoc.get('root', Y.XmlText)
 	root.delete(0, root.length)
 	const clearUpdate = Y.encodeStateAsUpdate(ydoc)
-	updateHandler(clearUpdate, null, ydoc, null)
-	
 	const newDoc = rewriteDoc(docName, htmlContent, ydoc, (editor, binding) => {
 		return binding.doc
 	})
-	const update = Y.encodeStateAsUpdate(newDoc);
+	const newDocUpdate = Y.encodeStateAsUpdate(newDoc);
+	const update = Y.mergeUpdates([clearUpdate,newDocUpdate])
 	updateHandler(update, null, ydoc, null)
 };

@@ -14,8 +14,6 @@ const port = number.parseInt(process.env.PORT || "1234");
 const server = http.createServer(async (_request, response) => {
 	if (_request.url === "/update" && _request.method === "POST") {
 		const body = await getBody(_request);
-		// const doc = getYDoc('odin_document/' + body.document_id)
-		// console.log((doc.getText('title')));
 		await updateDocumentContent('odin_document/' + body.document_id, body.body);
 		response.writeHead(200);
 		response.end();

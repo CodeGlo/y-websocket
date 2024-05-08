@@ -8,6 +8,9 @@ const {
 const { $getRoot, $getSelection } = require('lexical')
 const { Transaction } = require('yjs');
 const { JSDOM } = require('jsdom')
+const {
+    ListNode, ListItemNode
+} = require('@lexical/list');
 
 /**
  * @typedef {import('@lexical/yjs').Binding} Binding
@@ -45,10 +48,8 @@ function rewriteDoc(
     global.window = dom.window;
     global.document = dom.window.document;
     global.navigator = dom.window.navigator;
-    const editor = createHeadlessEditor();
-    //  new Promise((resolve, reject) => {
+    const editor = createHeadlessEditor({nodes: [ListNode, ListItemNode]});
     const id = docName;
-    // const doc = ;
     const docMap = new Map([[id, doc]]);
     const provider = createNoOpProvider();
     const binding = createBinding(editor, provider, id, doc, docMap);
@@ -56,18 +57,14 @@ function rewriteDoc(
     const unsubscribe = registerCollaborationListeners(editor, provider, binding);
     editor.update(() => {
         const newNodes = $generateNodesFromDOM(editor, dom.window.document);
-        // Select the root
         $getRoot().select();
         const selection = $getSelection();
         selection?.insertNodes(newNodes);
     }, { discrete: true })
 
     const res = callback(editor, binding, provider);
-
     unsubscribe();
-
     return res
-
 }
 
 
