@@ -11,6 +11,9 @@ const { JSDOM } = require('jsdom')
 const {
     ListNode, ListItemNode
 } = require('@lexical/list');
+const {
+    QuoteNode, HeadingNode
+} = require('@lexical/rich-text');
 
 /**
  * @typedef {import('@lexical/yjs').Binding} Binding
@@ -48,7 +51,7 @@ function rewriteDoc(
     global.window = dom.window;
     global.document = dom.window.document;
     global.navigator = dom.window.navigator;
-    const editor = createHeadlessEditor({nodes: [ListNode, ListItemNode]});
+    const editor = createHeadlessEditor({nodes: [ListNode, ListItemNode, QuoteNode, HeadingNode]});
     const id = docName;
     const docMap = new Map([[id, doc]]);
     const provider = createNoOpProvider();
