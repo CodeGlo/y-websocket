@@ -14,3 +14,7 @@ services:
       - 1234:1234
     expose:
       - "1234"
+networks:
+  default:
+    name: odin_master_network
+    external: true
